@@ -1,144 +1,281 @@
 if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
+    -- 🛡️ Bypass Anti-Cheat automático con mensaje visual al iniciar
 
-    -- AntiCheat Desactivado Message
-    local msg = Instance.new("TextLabel")
-    msg.Size = UDim2.new(0, 300, 0, 50)
-    msg.Position = UDim2.new(0.5, -150, 0.1, 0)
-    msg.AnchorPoint = Vector2.new(0.5, 0)
-    msg.Text = " Kenya Se follo al AntiCheat "
-    msg.TextSize = 22
-    msg.TextColor3 = Color3.fromRGB(255, 255, 255)
-    msg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    msg.BackgroundTransparency = 0.3
-    msg.BorderSizePixel = 0
-    msg.Parent = game:GetService("CoreGui")
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local Client = ReplicatedStorage:WaitForChild("Client")
+    local player = Players.LocalPlayer
 
-    task.delay(2, function()
-        msg:Destroy()
+    local function showBypassMessage()
+        local screenGui = Instance.new("ScreenGui")
+        screenGui.Name = "AntiCheatBypassMsg"
+        screenGui.Parent = player:WaitForChild("PlayerGui")
+
+        local frame = Instance.new("Frame")
+        frame.Size = UDim2.new(0, 300, 0, 50)
+        frame.Position = UDim2.new(0.5, -150, 0.4, 0)
+        frame.BackgroundColor3 = Color3.new(0, 0, 0)
+        frame.BackgroundTransparency = 0.7
+        frame.BorderSizePixel = 0
+        frame.AnchorPoint = Vector2.new(0.5, 0.5)
+        frame.Parent = screenGui
+
+        local textLabel = Instance.new("TextLabel")
+        textLabel.Size = UDim2.new(1, 0, 1, 0)
+        textLabel.BackgroundTransparency = 1
+        textLabel.Text = "Kenya mató al AntiCheat"
+        textLabel.TextColor3 = Color3.new(1, 0, 0)
+        textLabel.TextScaled = true
+        textLabel.Font = Enum.Font.SourceSansBold
+        textLabel.Parent = frame
+
+        delay(2, function()
+            screenGui:Destroy()
+        end)
+    end
+
+    showBypassMessage()
+
+    -- Spoofeo y bypass anti-cheat
+    local mt = getrawmetatable(game)
+    local oldNamecall = mt.__namecall
+    local oldIndex = mt.__index
+    local oldNewIndex = mt.__newindex
+
+    setreadonly(mt, false)
+
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        local args = {...}
+        if self == Client and method == "FireServer" then
+            local command = args[1]
+            if command == "ChangeSize" or command == "ChangeTransparency" then
+                -- Bloquear la llamada para evitar detección
+                return
+            end
+        end
+        return oldNamecall(self, ...)
     end)
 
-    
--- GUI con menú principal y submenús (6 casillas + minimizar + cerrar)
+    mt.__index = newcclosure(function(self, key)
+        if key == "Size" then
+            return Vector3.new(1,1,1)
+        elseif key == "Transparency" then
+            return 0
+        end
+        return oldIndex(self, key)
+    end)
 
--- Variables
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+    mt.__newindex = newcclosure(function(self, key, value)
+        if key == "Size" or key == "Transparency" then
+            -- Ignorar cambios para evitar detección
+            return
+        end
+        return oldNewIndex(self, key, value)
+    end)
 
--- Pantalla principal
-local screenGui = Instance.new("ScreenGui", playerGui)
-screenGui.Name = "MainGui"
-screenGui.ResetOnSpawn = false
+    setreadonly(mt, true)
 
--- Frame principal
-local mainFrame = Instance.new("Frame", screenGui)
-mainFrame.Size = UDim2.new(0, 400, 0, 300)
-mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
-mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-mainFrame.BorderSizePixel = 0
-mainFrame.Visible = true
-mainFrame.Name = "MainFrame"
+    -- Aquí empieza tu GUI Reach original
 
--- UICorner para bordes redondeados
-local corner = Instance.new("UICorner", mainFrame)
-corner.CornerRadius = UDim.new(0, 12)
+    -- Create ScreenGui
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+    screenGui.Name = "LegReachGUI"
+    screenGui.ResetOnSpawn = false -- Prevent GUI from resetting on spawn
 
--- Minimizar botón
-local minimize = Instance.new("TextButton", mainFrame)
-minimize.Size = UDim2.new(0, 30, 0, 30)
-minimize.Position = UDim2.new(1, -70, 0, 10)
-minimize.Text = "-"
-minimize.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+    -- Create Frame
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 250, 0, 120) -- Increased size
+    frame.Position = UDim2.new(0.5, -125, 0.5, -60)
+    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    frame.BorderSizePixel = 0
+    frame.Parent = screenGui
 
--- Cerrar botón
-local close = Instance.new("TextButton", mainFrame)
-close.Size = UDim2.new(0, 30, 0, 30)
-close.Position = UDim2.new(1, -35, 0, 10)
-close.Text = "X"
-close.BackgroundColor3 = Color3.fromRGB(120, 40, 40)
-close.TextColor3 = Color3.fromRGB(255, 255, 255)
+    -- Add UI Corner for rounded edges
+    local uiCorner = Instance.new("UICorner")
+    uiCorner.CornerRadius = UDim.new(0, 8)
+    uiCorner.Parent = frame
 
--- Funciones de botones
-close.MouseButton1Click:Connect(function()
-	screenGui:Destroy()
-end)
+    -- Create Title (for dragging)
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 30)
+    title.BackgroundTransparency = 1
+    title.Text = "Leg Reach Controller"
+    title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    title.Font = Enum.Font.SourceSansBold
+    title.TextSize = 16
+    title.Parent = frame
 
-local minimized = false
-minimize.MouseButton1Click:Connect(function()
-	minimized = not minimized
-	for _, v in ipairs(mainFrame:GetChildren()) do
-		if v:IsA("TextButton") and v.Name ~= "Minimize" and v.Name ~= "Close" then
-			v.Visible = not minimized
-		end
-	end
-end)
+    -- Create Toggle Button
+    local toggleButton = Instance.new("TextButton")
+    toggleButton.Size = UDim2.new(0, 220, 0, 40)
+    toggleButton.Position = UDim2.new(0.5, -110, 0, 40)
+    toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    toggleButton.Text = "Toggle Leg Reach: Off"
+    toggleButton.Parent = frame
+    local toggleCorner = Instance.new("UICorner")
+    toggleCorner.CornerRadius = UDim.new(0, 6)
+    toggleCorner.Parent = toggleButton
 
--- Marco de botones de menú
-local menuFrame = Instance.new("Frame", mainFrame)
-menuFrame.Position = UDim2.new(0, 20, 0, 60)
-menuFrame.Size = UDim2.new(0, 100, 0, 210)
-menuFrame.BackgroundTransparency = 1
+    -- Create Distance TextBox
+    local distanceBox = Instance.new("TextBox")
+    distanceBox.Size = UDim2.new(0, 220, 0, 40)
+    distanceBox.Position = UDim2.new(0.5, -110, 0, 80)
+    distanceBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    distanceBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    distanceBox.PlaceholderText = "Enter Leg Distance"
+    distanceBox.Parent = frame
+    local boxCorner = Instance.new("UICorner")
+    boxCorner.CornerRadius = UDim.new(0, 6)
+    boxCorner.Parent = distanceBox
 
--- Marco de contenido
-local contentFrame = Instance.new("Frame", mainFrame)
-contentFrame.Position = UDim2.new(0, 130, 0, 60)
-contentFrame.Size = UDim2.new(0, 250, 0, 210)
-contentFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Instance.new("UICorner", contentFrame).CornerRadius = UDim.new(0, 8)
+    -- Create Close Button
+    local closeButton = Instance.new("TextButton")
+    closeButton.Size = UDim2.new(0, 30, 0, 30)
+    closeButton.Position = UDim2.new(1, -40, 0, 5)
+    closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    closeButton.Text = "X"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.Parent = frame
+    local closeCorner = Instance.new("UICorner")
+    closeCorner.CornerRadius = UDim.new(0, 6)
+    closeCorner.Parent = closeButton
 
--- Botón volver
-local backButton = Instance.new("TextButton", contentFrame)
-backButton.Size = UDim2.new(0, 60, 0, 25)
-backButton.Position = UDim2.new(0, 10, 1, -35)
-backButton.Text = "< Volver"
-backButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-backButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-backButton.Visible = false
+    -- Dragging Functionality
+    local dragging = false
+    local dragInput, dragStart, startPos
+    local function updateDrag(input)
+        local delta = input.Position - dragStart
+        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    end
 
--- Contenido de cada casilla
-local contents = {}
-for i = 1, 6 do
-	local content = Instance.new("TextLabel", contentFrame)
-	content.Size = UDim2.new(1, -20, 1, -20)
-	content.Position = UDim2.new(0, 10, 0, 10)
-	content.BackgroundTransparency = 1
-	content.TextColor3 = Color3.fromRGB(255, 255, 255)
-	content.TextWrapped = true
-	content.TextScaled = true
-	content.Visible = false
-	contents[i] = content
+    title.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    title.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if dragging then
+                updateDrag(input)
+            end
+        end
+    end)
+
+    -- Variables
+    local legreach = false
+    local LegdistanceThreshold = 1
+    local leftLeg, rightLeg, ball
+
+    -- Character setup with detailed debugging
+    local function setupCharacter()
+        local char = player.Character or player.CharacterAdded:Wait()
+        leftLeg = char:FindFirstChild("Left Leg") or char:FindFirstChild("LeftFoot")
+        rightLeg = char:FindFirstChild("Right Leg") or char:FindFirstChild("RightFoot")
+        ball = workspace:FindFirstChild("TPSSystem") and workspace.TPSSystem:FindFirstChild("TPS")
+        
+        if not leftLeg then warn("Left Leg/LeftFoot not found in character") end
+        if not rightLeg then warn("Right Leg/RightFoot not found in character") end
+        if not ball then warn("Ball (TPSSystem.TPS) not found in workspace") end
+        
+        if not (leftLeg and rightLeg and ball) then
+            warn("Failed to find required character parts or ball")
+            return false
+        end
+        return true
+    end
+
+    -- Leg reach logic with debugging
+    local function checkLegs()
+        while legreach do
+            task.wait(0.1)
+            if not (leftLeg and rightLeg and ball) then
+                warn("Missing parts during loop, stopping leg reach")
+                legreach = false
+                return
+            end
+            local distanceToLeftLeg = (ball.Position - leftLeg.Position).Magnitude
+            local distanceToRightLeg = (ball.Position - rightLeg.Position).Magnitude
+
+            if distanceToLeftLeg <= LegdistanceThreshold then
+                pcall(function()
+                    firetouchinterest(leftLeg, ball, 0)
+                    firetouchinterest(leftLeg, ball, 1)
+                end)
+            end
+
+            if distanceToRightLeg <= LegdistanceThreshold then
+                pcall(function()
+                    firetouchinterest(rightLeg, ball, 0)
+                    firetouchinterest(rightLeg, ball, 1)
+                end)
+            end
+        end
+    end
+
+    -- Initialize character
+    local characterSetupSuccess = setupCharacter()
+    if not characterSetupSuccess then
+        warn("Initial character setup failed")
+        screenGui:Destroy()
+        return
+    end
+
+    -- Re-setup character when it respawns
+    player.CharacterAdded:Connect(function()
+        if setupCharacter() and legreach then
+            task.spawn(checkLegs)
+        end
+    end)
+
+    -- Toggle Button Functionality
+    toggleButton.MouseButton1Click:Connect(function()
+        legreach = not legreach
+        toggleButton.Text = "Toggle Leg Reach: " .. (legreach and "On" or "Off")
+        if legreach then
+            if setupCharacter() then
+                task.spawn(checkLegs)
+            else
+                warn("Cannot enable leg reach: character setup failed")
+                legreach = false
+                toggleButton.Text = "Toggle Leg Reach: Off"
+            end
+        else
+            print("Leg reach turned off")
+        end
+    end)
+
+    -- Distance TextBox Functionality
+    distanceBox.FocusLost:Connect(function(enterPressed)
+        if enterPressed then
+            local num = tonumber(distanceBox.Text)
+            if num and num > 0 then
+                LegdistanceThreshold = num
+                if legreach then
+                    task.spawn(checkLegs)
+                end
+            else
+                warn("Invalid distance input")
+            end
+            distanceBox.Text = ""
+        end
+    end)
+
+    -- Close Button Functionality
+    closeButton.MouseButton1Click:Connect(function()
+        screenGui:Destroy()
+    end)
+else
+    warn("This script only works for TPS Street Soccer (PlaceId: 1597763879 or 335760407)")
 end
-
--- Contenido específico de la casilla 1 (info del jugador)
-contents[1].Text = "** Jugador: **" .. player.Name .. "\n** Executor: Synapse X (ejemplo)**"
-for i = 2, 6 do
-	contents[i].Text = "** Casilla** " .. i .. "\n(Soon)"
-end
-
--- Crear los botones del menú
-for i = 1, 6 do
-	local button = Instance.new("TextButton", menuFrame)
-	button.Size = UDim2.new(1, 0, 0, 30)
-	button.Position = UDim2.new(0, 0, 0, (i - 1) * 35)
-	button.Text = "Casilla " .. i
-	button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-	button.TextColor3 = Color3.fromRGB(255, 255, 255)
-	button.Name = "Casilla" .. i
-
-	button.MouseButton1Click:Connect(function()
-		-- Mostrar solo el contenido correspondiente
-		for j = 1, 6 do
-			contents[j].Visible = (j == i)
-		end
-		backButton.Visible = true
-	end)
-end
-
--- Botón volver regresa al menú principal
-backButton.MouseButton1Click:Connect(function()
-	for i = 1, 6 do
-		contents[i].Visible = false
-	end
-	backButton.Visible = false
-end)
