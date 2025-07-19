@@ -1,0 +1,152 @@
+if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
+
+    -- AntiCheat Desactivado Message
+    local msg = Instance.new("TextLabel")
+    msg.Size = UDim2.new(0, 300, 0, 50)
+    msg.Position = UDim2.new(0.5, -150, 0.1, 0)
+    msg.AnchorPoint = Vector2.new(0.5, 0)
+    msg.Text = " Kenya Se follo al AntiCheat "
+    msg.TextSize = 22
+    msg.TextColor3 = Color3.fromRGB(255, 255, 255)
+    msg.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    msg.BackgroundTransparency = 0.3
+    msg.BorderSizePixel = 0
+    msg.Parent = game:GetService("CoreGui")
+
+    task.delay(2, function()
+        msg:Destroy()
+    end)
+
+    -- Crear GUI principal
+    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    ScreenGui.Name = "KenyaReachGUI"
+    ScreenGui.ResetOnSpawn = false
+
+    local MainFrame = Instance.new("Frame", ScreenGui)
+    MainFrame.Size = UDim2.new(0, 400, 0, 300)
+    MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Active = true
+    MainFrame.Draggable = true
+
+    local UICorner = Instance.new("UICorner", MainFrame)
+    UICorner.CornerRadius = UDim.new(0, 12)
+
+    local Title = Instance.new("TextLabel", MainFrame)
+    Title.Size = UDim2.new(1, 0, 0, 30)
+    Title.Text = "🎮 Kenya Reach GUI"
+    Title.BackgroundTransparency = 1
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 18
+    Title.Font = Enum.Font.GothamBold
+
+    -- Botón Minimizar
+    local Minimize = Instance.new("TextButton", MainFrame)
+    Minimize.Size = UDim2.new(0, 30, 0, 30)
+    Minimize.Position = UDim2.new(1, -65, 0, 0)
+    Minimize.Text = "-"
+    Minimize.TextSize = 20
+    Minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Minimize.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+    Minimize.AutoButtonColor = false
+
+    -- Botón Cerrar
+    local Close = Instance.new("TextButton", MainFrame)
+    Close.Size = UDim2.new(0, 30, 0, 30)
+    Close.Position = UDim2.new(1, -30, 0, 0)
+    Close.Text = "X"
+    Close.TextSize = 20
+    Close.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Close.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    Close.AutoButtonColor = false
+
+    Close.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+
+    local FloatingIcon = nil
+    Minimize.MouseButton1Click:Connect(function()
+        MainFrame.Visible = false
+        FloatingIcon = Instance.new("TextButton", ScreenGui)
+        FloatingIcon.Size = UDim2.new(0, 40, 0, 40)
+        FloatingIcon.Position = UDim2.new(0.02, 0, 0.4, 0)
+        FloatingIcon.Text = "🔴"
+        FloatingIcon.TextSize = 30
+        FloatingIcon.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        FloatingIcon.BackgroundTransparency = 0.2
+        FloatingIcon.Draggable = true
+        FloatingIcon.Active = true
+
+        FloatingIcon.MouseButton1Click:Connect(function()
+            FloatingIcon:Destroy()
+            MainFrame.Visible = true
+        end)
+    end)
+
+    -- UIGrid para las 6 casillas
+    local Grid = Instance.new("Frame", MainFrame)
+    Grid.Position = UDim2.new(0, 10, 0, 40)
+    Grid.Size = UDim2.new(1, -20, 1, -50)
+    Grid.BackgroundTransparency = 1
+
+    local UIGridLayout = Instance.new("UIGridLayout", Grid)
+    UIGridLayout.CellSize = UDim2.new(0, 120, 0, 100)
+    UIGridLayout.CellPadding = UDim2.new(0, 10, 0, 10)
+
+    -- Función para crear casillas
+    local function createTile(titleText)
+        local tile = Instance.new("Frame")
+        tile.Size = UDim2.new(0, 120, 0, 100)
+        tile.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+        tile.BorderSizePixel = 0
+
+        local tileCorner = Instance.new("UICorner", tile)
+        tileCorner.CornerRadius = UDim.new(0, 8)
+
+        local title = Instance.new("TextLabel", tile)
+        title.Size = UDim2.new(1, 0, 0, 30)
+        title.Text = titleText
+        title.TextColor3 = Color3.fromRGB(255, 255, 255)
+        title.BackgroundTransparency = 1
+        title.TextSize = 14
+        title.Font = Enum.Font.GothamBold
+
+        return tile
+    end
+
+    -- Casilla 1: Home con avatar, username, executor
+    local homeTile = createTile("🏠 Home")
+    local user = game.Players.LocalPlayer
+
+    local avatar = Instance.new("ImageLabel", homeTile)
+    avatar.Size = UDim2.new(0, 60, 0, 60)
+    avatar.Position = UDim2.new(0.5, -30, 0, 30)
+    avatar.BackgroundTransparency = 1
+    avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. user.UserId .. "&width=420&height=420&format=png"
+
+    local nameLabel = Instance.new("TextLabel", homeTile)
+    nameLabel.Size = UDim2.new(1, 0, 0, 15)
+    nameLabel.Position = UDim2.new(0, 0, 1, -30)
+    nameLabel.Text = "👤 " .. user.Name
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    nameLabel.TextSize = 12
+
+    local executorLabel = Instance.new("TextLabel", homeTile)
+    executorLabel.Size = UDim2.new(1, 0, 0, 15)
+    executorLabel.Position = UDim2.new(0, 0, 1, -15)
+    executorLabel.Text = "📦 Executor: " .. (identifyexecutor and identifyexecutor() or "Unknown")
+    executorLabel.BackgroundTransparency = 1
+    executorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    executorLabel.TextSize = 12
+
+    homeTile.Parent = Grid
+
+    -- Casillas 2 a 6 vacías (puedes personalizarlas después)
+    for i = 2, 6 do
+        local tile = createTile("🧩 Casilla " .. i .. "\n(Soon)")
+        tile.Parent = Grid
+    end
+
+end
