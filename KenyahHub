@@ -17,136 +17,128 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
         msg:Destroy()
     end)
 
-    -- Crear GUI principal
-    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-    ScreenGui.Name = "KenyaReachGUI"
-    ScreenGui.ResetOnSpawn = false
+    
+-- GUI con menú principal y submenús (6 casillas + minimizar + cerrar)
 
-    local MainFrame = Instance.new("Frame", ScreenGui)
-    MainFrame.Size = UDim2.new(0, 400, 0, 300)
-    MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    MainFrame.BorderSizePixel = 0
-    MainFrame.Active = true
-    MainFrame.Draggable = true
+-- Variables
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
-    local UICorner = Instance.new("UICorner", MainFrame)
-    UICorner.CornerRadius = UDim.new(0, 12)
+-- Pantalla principal
+local screenGui = Instance.new("ScreenGui", playerGui)
+screenGui.Name = "MainGui"
+screenGui.ResetOnSpawn = false
 
-    local Title = Instance.new("TextLabel", MainFrame)
-    Title.Size = UDim2.new(1, 0, 0, 30)
-    Title.Text = "🎮 Kenya Reach GUI"
-    Title.BackgroundTransparency = 1
-    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.TextSize = 18
-    Title.Font = Enum.Font.GothamBold
+-- Frame principal
+local mainFrame = Instance.new("Frame", screenGui)
+mainFrame.Size = UDim2.new(0, 400, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 0
+mainFrame.Visible = true
+mainFrame.Name = "MainFrame"
 
-    -- Botón Minimizar
-    local Minimize = Instance.new("TextButton", MainFrame)
-    Minimize.Size = UDim2.new(0, 30, 0, 30)
-    Minimize.Position = UDim2.new(1, -65, 0, 0)
-    Minimize.Text = "-"
-    Minimize.TextSize = 20
-    Minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Minimize.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
-    Minimize.AutoButtonColor = false
+-- UICorner para bordes redondeados
+local corner = Instance.new("UICorner", mainFrame)
+corner.CornerRadius = UDim.new(0, 12)
 
-    -- Botón Cerrar
-    local Close = Instance.new("TextButton", MainFrame)
-    Close.Size = UDim2.new(0, 30, 0, 30)
-    Close.Position = UDim2.new(1, -30, 0, 0)
-    Close.Text = "X"
-    Close.TextSize = 20
-    Close.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Close.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    Close.AutoButtonColor = false
+-- Minimizar botón
+local minimize = Instance.new("TextButton", mainFrame)
+minimize.Size = UDim2.new(0, 30, 0, 30)
+minimize.Position = UDim2.new(1, -70, 0, 10)
+minimize.Text = "-"
+minimize.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+minimize.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-    Close.MouseButton1Click:Connect(function()
-        ScreenGui:Destroy()
-    end)
+-- Cerrar botón
+local close = Instance.new("TextButton", mainFrame)
+close.Size = UDim2.new(0, 30, 0, 30)
+close.Position = UDim2.new(1, -35, 0, 10)
+close.Text = "X"
+close.BackgroundColor3 = Color3.fromRGB(120, 40, 40)
+close.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-    local FloatingIcon = nil
-    Minimize.MouseButton1Click:Connect(function()
-        MainFrame.Visible = false
-        FloatingIcon = Instance.new("TextButton", ScreenGui)
-        FloatingIcon.Size = UDim2.new(0, 40, 0, 40)
-        FloatingIcon.Position = UDim2.new(0.02, 0, 0.4, 0)
-        FloatingIcon.Text = "🔴"
-        FloatingIcon.TextSize = 30
-        FloatingIcon.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        FloatingIcon.BackgroundTransparency = 0.2
-        FloatingIcon.Draggable = true
-        FloatingIcon.Active = true
+-- Funciones de botones
+close.MouseButton1Click:Connect(function()
+	screenGui:Destroy()
+end)
 
-        FloatingIcon.MouseButton1Click:Connect(function()
-            FloatingIcon:Destroy()
-            MainFrame.Visible = true
-        end)
-    end)
+local minimized = false
+minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	for _, v in ipairs(mainFrame:GetChildren()) do
+		if v:IsA("TextButton") and v.Name ~= "Minimize" and v.Name ~= "Close" then
+			v.Visible = not minimized
+		end
+	end
+end)
 
-    -- UIGrid para las 6 casillas
-    local Grid = Instance.new("Frame", MainFrame)
-    Grid.Position = UDim2.new(0, 10, 0, 40)
-    Grid.Size = UDim2.new(1, -20, 1, -50)
-    Grid.BackgroundTransparency = 1
+-- Marco de botones de menú
+local menuFrame = Instance.new("Frame", mainFrame)
+menuFrame.Position = UDim2.new(0, 20, 0, 60)
+menuFrame.Size = UDim2.new(0, 100, 0, 210)
+menuFrame.BackgroundTransparency = 1
 
-    local UIGridLayout = Instance.new("UIGridLayout", Grid)
-    UIGridLayout.CellSize = UDim2.new(0, 120, 0, 100)
-    UIGridLayout.CellPadding = UDim2.new(0, 10, 0, 10)
+-- Marco de contenido
+local contentFrame = Instance.new("Frame", mainFrame)
+contentFrame.Position = UDim2.new(0, 130, 0, 60)
+contentFrame.Size = UDim2.new(0, 250, 0, 210)
+contentFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", contentFrame).CornerRadius = UDim.new(0, 8)
 
-    -- Función para crear casillas
-    local function createTile(titleText)
-        local tile = Instance.new("Frame")
-        tile.Size = UDim2.new(0, 120, 0, 100)
-        tile.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-        tile.BorderSizePixel = 0
+-- Botón volver
+local backButton = Instance.new("TextButton", contentFrame)
+backButton.Size = UDim2.new(0, 60, 0, 25)
+backButton.Position = UDim2.new(0, 10, 1, -35)
+backButton.Text = "< Volver"
+backButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+backButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+backButton.Visible = false
 
-        local tileCorner = Instance.new("UICorner", tile)
-        tileCorner.CornerRadius = UDim.new(0, 8)
-
-        local title = Instance.new("TextLabel", tile)
-        title.Size = UDim2.new(1, 0, 0, 30)
-        title.Text = titleText
-        title.TextColor3 = Color3.fromRGB(255, 255, 255)
-        title.BackgroundTransparency = 1
-        title.TextSize = 14
-        title.Font = Enum.Font.GothamBold
-
-        return tile
-    end
-
-    -- Casilla 1: Home con avatar, username, executor
-    local homeTile = createTile("🏠 Home")
-    local user = game.Players.LocalPlayer
-
-    local avatar = Instance.new("ImageLabel", homeTile)
-    avatar.Size = UDim2.new(0, 60, 0, 60)
-    avatar.Position = UDim2.new(0.5, -30, 0, 30)
-    avatar.BackgroundTransparency = 1
-    avatar.Image = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. user.UserId .. "&width=420&height=420&format=png"
-
-    local nameLabel = Instance.new("TextLabel", homeTile)
-    nameLabel.Size = UDim2.new(1, 0, 0, 15)
-    nameLabel.Position = UDim2.new(0, 0, 1, -30)
-    nameLabel.Text = "👤 " .. user.Name
-    nameLabel.BackgroundTransparency = 1
-    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    nameLabel.TextSize = 12
-
-    local executorLabel = Instance.new("TextLabel", homeTile)
-    executorLabel.Size = UDim2.new(1, 0, 0, 15)
-    executorLabel.Position = UDim2.new(0, 0, 1, -15)
-    executorLabel.Text = "📦 Executor: " .. (identifyexecutor and identifyexecutor() or "Unknown")
-    executorLabel.BackgroundTransparency = 1
-    executorLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    executorLabel.TextSize = 12
-
-    homeTile.Parent = Grid
-
-    -- Casillas 2 a 6 vacías (puedes personalizarlas después)
-    for i = 2, 6 do
-        local tile = createTile("🧩 Casilla " .. i .. "\n(Soon)")
-        tile.Parent = Grid
-    end
-
+-- Contenido de cada casilla
+local contents = {}
+for i = 1, 6 do
+	local content = Instance.new("TextLabel", contentFrame)
+	content.Size = UDim2.new(1, -20, 1, -20)
+	content.Position = UDim2.new(0, 10, 0, 10)
+	content.BackgroundTransparency = 1
+	content.TextColor3 = Color3.fromRGB(255, 255, 255)
+	content.TextWrapped = true
+	content.TextScaled = true
+	content.Visible = false
+	contents[i] = content
 end
+
+-- Contenido específico de la casilla 1 (info del jugador)
+contents[1].Text = "** Jugador: **" .. player.Name .. "\n** Executor: Synapse X (ejemplo)**"
+for i = 2, 6 do
+	contents[i].Text = "** Casilla** " .. i .. "\n(Soon)"
+end
+
+-- Crear los botones del menú
+for i = 1, 6 do
+	local button = Instance.new("TextButton", menuFrame)
+	button.Size = UDim2.new(1, 0, 0, 30)
+	button.Position = UDim2.new(0, 0, 0, (i - 1) * 35)
+	button.Text = "Casilla " .. i
+	button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+	button.TextColor3 = Color3.fromRGB(255, 255, 255)
+	button.Name = "Casilla" .. i
+
+	button.MouseButton1Click:Connect(function()
+		-- Mostrar solo el contenido correspondiente
+		for j = 1, 6 do
+			contents[j].Visible = (j == i)
+		end
+		backButton.Visible = true
+	end)
+end
+
+-- Botón volver regresa al menú principal
+backButton.MouseButton1Click:Connect(function()
+	for i = 1, 6 do
+		contents[i].Visible = false
+	end
+	backButton.Visible = false
+end)
