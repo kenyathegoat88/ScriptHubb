@@ -1,11 +1,10 @@
 if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
-    -- 🛡️ Bypass Anti-Cheat automático con mensaje visual al iniciar
-
     local Players = game:GetService("Players")
     local ReplicatedStorage = game:GetService("ReplicatedStorage")
     local Client = ReplicatedStorage:WaitForChild("Client")
     local player = Players.LocalPlayer
 
+    -- Bypass Anti-Cheat automático con mensaje
     local function showBypassMessage()
         local screenGui = Instance.new("ScreenGui")
         screenGui.Name = "AntiCheatBypassMsg"
@@ -14,8 +13,8 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
         local frame = Instance.new("Frame")
         frame.Size = UDim2.new(0, 300, 0, 50)
         frame.Position = UDim2.new(0.5, -150, 0.4, 0)
-        frame.BackgroundColor3 = Color3.new(0, 0, 0)
-        frame.BackgroundTransparency = 0.7
+        frame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+        frame.BackgroundTransparency = 0.15
         frame.BorderSizePixel = 0
         frame.AnchorPoint = Vector2.new(0.5, 0.5)
         frame.Parent = screenGui
@@ -24,9 +23,9 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
         textLabel.Size = UDim2.new(1, 0, 1, 0)
         textLabel.BackgroundTransparency = 1
         textLabel.Text = "Kenya mató al AntiCheat"
-        textLabel.TextColor3 = Color3.new(1, 0, 0)
+        textLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
         textLabel.TextScaled = true
-        textLabel.Font = Enum.Font.SourceSansBold
+        textLabel.Font = Enum.Font.GothamBold
         textLabel.Parent = frame
 
         delay(2, function()
@@ -36,7 +35,7 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
 
     showBypassMessage()
 
-    -- Spoofeo y bypass anti-cheat
+    -- Bypass metatable spoof
     local mt = getrawmetatable(game)
     local oldNamecall = mt.__namecall
     local oldIndex = mt.__index
@@ -50,7 +49,6 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
         if self == Client and method == "FireServer" then
             local command = args[1]
             if command == "ChangeSize" or command == "ChangeTransparency" then
-                -- Bloquear la llamada para evitar detección
                 return
             end
         end
@@ -68,7 +66,6 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
 
     mt.__newindex = newcclosure(function(self, key, value)
         if key == "Size" or key == "Transparency" then
-            -- Ignorar cambios para evitar detección
             return
         end
         return oldNewIndex(self, key, value)
@@ -76,76 +73,87 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
 
     setreadonly(mt, true)
 
-    -- Aquí empieza tu GUI Reach original
-
-    -- Create ScreenGui
+    -- GUI Reach Diseño similar a la imagen
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = player:WaitForChild("PlayerGui")
     screenGui.Name = "LegReachGUI"
-    screenGui.ResetOnSpawn = false -- Prevent GUI from resetting on spawn
+    screenGui.ResetOnSpawn = false
+    screenGui.Parent = player:WaitForChild("PlayerGui")
 
-    -- Create Frame
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 250, 0, 120) -- Increased size
-    frame.Position = UDim2.new(0.5, -125, 0.5, -60)
-    frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    frame.Size = UDim2.new(0, 280, 0, 140)
+    frame.Position = UDim2.new(0.5, -140, 0.5, -70)
+    frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
     frame.BorderSizePixel = 0
     frame.Parent = screenGui
 
-    -- Add UI Corner for rounded edges
     local uiCorner = Instance.new("UICorner")
-    uiCorner.CornerRadius = UDim.new(0, 8)
+    uiCorner.CornerRadius = UDim.new(0, 12)
     uiCorner.Parent = frame
 
-    -- Create Title (for dragging)
     local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, 0, 0, 30)
+    title.Size = UDim2.new(1, 0, 0, 35)
+    title.Position = UDim2.new(0, 0, 0, 5)
     title.BackgroundTransparency = 1
     title.Text = "Leg Reach Controller"
-    title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    title.Font = Enum.Font.SourceSansBold
-    title.TextSize = 16
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 20
+    title.TextColor3 = Color3.fromRGB(230, 230, 230)
     title.Parent = frame
 
-    -- Create Toggle Button
     local toggleButton = Instance.new("TextButton")
-    toggleButton.Size = UDim2.new(0, 220, 0, 40)
-    toggleButton.Position = UDim2.new(0.5, -110, 0, 40)
+    toggleButton.Size = UDim2.new(0, 250, 0, 45)
+    toggleButton.Position = UDim2.new(0, 15, 0, 50)
     toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    toggleButton.TextColor3 = Color3.fromRGB(240, 240, 240)
+    toggleButton.Font = Enum.Font.GothamSemibold
+    toggleButton.TextSize = 18
     toggleButton.Text = "Toggle Leg Reach: Off"
+    toggleButton.AutoButtonColor = false
     toggleButton.Parent = frame
+
     local toggleCorner = Instance.new("UICorner")
-    toggleCorner.CornerRadius = UDim.new(0, 6)
+    toggleCorner.CornerRadius = UDim.new(0, 8)
     toggleCorner.Parent = toggleButton
 
-    -- Create Distance TextBox
+    toggleButton.MouseEnter:Connect(function()
+        toggleButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    end)
+    toggleButton.MouseLeave:Connect(function()
+        toggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end)
+
     local distanceBox = Instance.new("TextBox")
-    distanceBox.Size = UDim2.new(0, 220, 0, 40)
-    distanceBox.Position = UDim2.new(0.5, -110, 0, 80)
+    distanceBox.Size = UDim2.new(0, 250, 0, 40)
+    distanceBox.Position = UDim2.new(0, 15, 0, 100)
     distanceBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-    distanceBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    distanceBox.TextColor3 = Color3.fromRGB(230, 230, 230)
+    distanceBox.Font = Enum.Font.Gotham
+    distanceBox.TextSize = 18
     distanceBox.PlaceholderText = "Enter Leg Distance"
+    distanceBox.ClearTextOnFocus = false
     distanceBox.Parent = frame
+
     local boxCorner = Instance.new("UICorner")
-    boxCorner.CornerRadius = UDim.new(0, 6)
+    boxCorner.CornerRadius = UDim.new(0, 8)
     boxCorner.Parent = distanceBox
 
-    -- Create Close Button
     local closeButton = Instance.new("TextButton")
-    closeButton.Size = UDim2.new(0, 30, 0, 30)
-    closeButton.Position = UDim2.new(1, -40, 0, 5)
-    closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    closeButton.Size = UDim2.new(0, 28, 0, 28)
+    closeButton.Position = UDim2.new(1, -35, 0, 5)
+    closeButton.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
     closeButton.Text = "X"
     closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.Font = Enum.Font.GothamBold
+    closeButton.TextSize = 18
     closeButton.Parent = frame
+
     local closeCorner = Instance.new("UICorner")
-    closeCorner.CornerRadius = UDim.new(0, 6)
+    closeCorner.CornerRadius = UDim.new(0, 14)
     closeCorner.Parent = closeButton
 
-    -- Dragging Functionality
+    -- Dragging functionality
     local dragging = false
-    local dragInput, dragStart, startPos
+    local dragStart, startPos
     local function updateDrag(input)
         local delta = input.Position - dragStart
         frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
@@ -166,56 +174,46 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
     end)
 
     title.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            if dragging then
-                updateDrag(input)
-            end
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            updateDrag(input)
         end
     end)
 
-    -- Variables
+    -- Variables y funciones Reach
     local legreach = false
     local LegdistanceThreshold = 1
     local leftLeg, rightLeg, ball
 
-    -- Character setup with detailed debugging
     local function setupCharacter()
         local char = player.Character or player.CharacterAdded:Wait()
         leftLeg = char:FindFirstChild("Left Leg") or char:FindFirstChild("LeftFoot")
         rightLeg = char:FindFirstChild("Right Leg") or char:FindFirstChild("RightFoot")
         ball = workspace:FindFirstChild("TPSSystem") and workspace.TPSSystem:FindFirstChild("TPS")
-        
-        if not leftLeg then warn("Left Leg/LeftFoot not found in character") end
-        if not rightLeg then warn("Right Leg/RightFoot not found in character") end
-        if not ball then warn("Ball (TPSSystem.TPS) not found in workspace") end
-        
         if not (leftLeg and rightLeg and ball) then
-            warn("Failed to find required character parts or ball")
+            warn("Faltan partes requeridas para Reach")
             return false
         end
         return true
     end
 
-    -- Leg reach logic with debugging
     local function checkLegs()
         while legreach do
             task.wait(0.1)
             if not (leftLeg and rightLeg and ball) then
-                warn("Missing parts during loop, stopping leg reach")
+                warn("Partes perdidas, deteniendo Reach")
                 legreach = false
                 return
             end
-            local distanceToLeftLeg = (ball.Position - leftLeg.Position).Magnitude
-            local distanceToRightLeg = (ball.Position - rightLeg.Position).Magnitude
+            local distLeft = (ball.Position - leftLeg.Position).Magnitude
+            local distRight = (ball.Position - rightLeg.Position).Magnitude
 
-            if distanceToLeftLeg <= LegdistanceThreshold then
+            if distLeft <= LegdistanceThreshold then
                 pcall(function()
                     firetouchinterest(leftLeg, ball, 0)
                     firetouchinterest(leftLeg, ball, 1)
                 end)
             end
-
-            if distanceToRightLeg <= LegdistanceThreshold then
+            if distRight <= LegdistanceThreshold then
                 pcall(function()
                     firetouchinterest(rightLeg, ball, 0)
                     firetouchinterest(rightLeg, ball, 1)
@@ -224,22 +222,19 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
         end
     end
 
-    -- Initialize character
     local characterSetupSuccess = setupCharacter()
     if not characterSetupSuccess then
-        warn("Initial character setup failed")
+        warn("Falló setup inicial")
         screenGui:Destroy()
         return
     end
 
-    -- Re-setup character when it respawns
     player.CharacterAdded:Connect(function()
         if setupCharacter() and legreach then
             task.spawn(checkLegs)
         end
     end)
 
-    -- Toggle Button Functionality
     toggleButton.MouseButton1Click:Connect(function()
         legreach = not legreach
         toggleButton.Text = "Toggle Leg Reach: " .. (legreach and "On" or "Off")
@@ -247,16 +242,15 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
             if setupCharacter() then
                 task.spawn(checkLegs)
             else
-                warn("Cannot enable leg reach: character setup failed")
+                warn("No se pudo activar Reach")
                 legreach = false
                 toggleButton.Text = "Toggle Leg Reach: Off"
             end
         else
-            print("Leg reach turned off")
+            print("Leg Reach desactivado")
         end
     end)
 
-    -- Distance TextBox Functionality
     distanceBox.FocusLost:Connect(function(enterPressed)
         if enterPressed then
             local num = tonumber(distanceBox.Text)
@@ -266,16 +260,16 @@ if game.PlaceId == 1597763879 or game.PlaceId == 335760407 then
                     task.spawn(checkLegs)
                 end
             else
-                warn("Invalid distance input")
+                warn("Entrada inválida para distancia")
             end
             distanceBox.Text = ""
         end
     end)
 
-    -- Close Button Functionality
     closeButton.MouseButton1Click:Connect(function()
         screenGui:Destroy()
     end)
+
 else
-    warn("This script only works for TPS Street Soccer (PlaceId: 1597763879 or 335760407)")
+    warn("Este script funciona solo en TPS Street Soccer (PlaceId: 1597763879 o 335760407)")
 end
